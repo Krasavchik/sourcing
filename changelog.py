@@ -163,7 +163,7 @@ def push_to_airtable(row):
     else:
         print(f"Failed to push row: {row['Repo']}, Error: {response.text}")
 
-
+print("getting the urls")
 urls = scrape_urls(input_url)
 
 # Step 2: Check for redirection to github.com
@@ -180,11 +180,12 @@ for url in urls:
                 pd.DataFrame([{"Created_date" : current_date , "Status" : "New" , "Repo": repo, "Author": author}])
             ], ignore_index=True)
 
+print("excluding the black listed repos")
 for index, row in github_redirects.iterrows():
     if row['Author'] in exclusion_list:
         github_redirects.drop(index, inplace=True)
 
-
+print("getting Github info")
 for index, row in github_redirects.iterrows():
     user_name, user_type, blog, bio, location = get_github_author_info(row['Author'])
     repo_name, repo_desc, star_count = query_github_repo(row['Repo'])
