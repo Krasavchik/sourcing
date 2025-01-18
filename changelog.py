@@ -89,7 +89,7 @@ def query_github_repo(repo_url):
     api_url = f"https://api.github.com/repos/{owner}/{repo}"
     headers={
         "Accept": "application/vnd.github.v3+json",
-        "Authorization": "Bearer {github_api_token}"
+        "Authorization": f"Bearer {github_api_token}"
     }
     try:
         response = requests.get(api_url, headers=headers)  # Pass headers as a keyword argument
@@ -111,7 +111,7 @@ def get_github_author_info(author_url):
     api_url = f"https://api.github.com/users/{username}"
     headers={
         "Accept": "application/vnd.github.v3+json",
-        "Authorization": "Bearer {github_api_token}"
+        "Authorization": f"Bearer {github_api_token}"
     }
     try:
         response = requests.get(api_url, headers=headers)  # Pass headers as a keyword argument
