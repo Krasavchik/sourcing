@@ -1,12 +1,9 @@
 name: Run changelog script
 
 on:
-  push:
-    branches:
-      - main
   schedule:
     # Runs every day at 10:00 AM CET (Central European Time)
-    - cron: '0 9 * * *'
+    - cron: '0 6 * * *'
 
 jobs:
   run-script:
