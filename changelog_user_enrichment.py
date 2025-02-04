@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import time
+from datetime import datetime
 
 # Function to extract patterns from the page and update Airtable
 def extract_links(url, record_id, api_key, base_id, table_name):
@@ -84,7 +85,7 @@ def get_airtable_urls(api_key, base_id, table_name):
     records_to_process = [
         (record['id'], record['fields'].get('Author'))
         for record in records
-        if record['fields'].get('Status') == 'New' and record['fields'].get('Type') == ['User']
+        if record['fields'].get('Date') == today
     ]
     return records_to_process
 

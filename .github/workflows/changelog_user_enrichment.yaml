@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run Extract Social Links Script
+      - name: Run Changelog User Enrichment (x and linkedin)
         env:
           TOKEN_AIRTABLE: ${{ secrets.TOKEN_AIRTABLE }}
         run: python changelog_user_enrichment.py
