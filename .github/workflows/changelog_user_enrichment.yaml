@@ -1,0 +1,26 @@
+name: Changelog User Enrichment
+
+on:
+  push:
+    branches:
+      - '**'  # Trigger on push to any branch
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Extract Social Links Script
+        env:
+          TOKEN_AIRTABLE: ${{ secrets.TOKEN_AIRTABLE }}
+        run: python extract_social_links.py
