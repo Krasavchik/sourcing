@@ -79,14 +79,13 @@ def get_airtable_urls(api_key, base_id, table_name):
         return []
 
     records = response.json().get('records', [])
-    print(records)
 
     # Filter records where Status is exactly 'New' and Type is exactly ['User']
-    today = datetime.now().strftime('%Y-%m-%d')
+    current_date = datetime.now().strftime('%-d/%-m/%Y')
     records_to_process = [
         (record['id'], record['fields'].get('Author'))
         for record in records
-        if record['fields'].get('Date') == today
+        if record['fields'].get('Date') == current_date
     ]
     return records_to_process
 
