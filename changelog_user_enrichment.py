@@ -91,7 +91,7 @@ def get_airtable_urls(api_key, base_id, table_name):
 if __name__ == "__main__":
     API_KEY = os.getenv("TOKEN_AIRTABLE")
     BASE_ID = 'appKhM4requBnJGOc'
-    TABLE_NAME = 'tbliWzB2T9dTEJJRD'
+    TABLE_NAME = 'tblgUEvOxS3HIcX5F'
 
     records = get_airtable_urls(API_KEY, BASE_ID, TABLE_NAME)
     print(records)
