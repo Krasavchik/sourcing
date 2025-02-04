@@ -23,4 +23,4 @@ jobs:
       - name: Run Extract Social Links Script
         env:
           TOKEN_AIRTABLE: ${{ secrets.TOKEN_AIRTABLE }}
-        run: python extract_social_links.py
+        run: python changelog_user_enrichment.py
