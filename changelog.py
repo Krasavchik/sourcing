@@ -40,7 +40,7 @@ input_url = f"{base_url}/{formatted_date}"
 #input_url = "https://nightly.changelog.com/2025/01/04"
 
 # Build the exclusion list
-exclusion_list = ["https://github.com/thechangelog", "https://github.com/trending", "https://github.com/NVIDIA", "https://github.com/NJU-PCALab", "https://github.com/bytedance"]
+exclusion_list = ["https://github.com/thechangelog", "https://github.com/trending"]
 
 # Function to scrape all URLs from the given website
 def scrape_urls(website_url):
