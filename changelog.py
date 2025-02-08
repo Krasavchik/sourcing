@@ -178,7 +178,8 @@ def push_to_airtable(row):
             "Website": row.get("Website"),
             "Bio": row.get("Bio"),
             "Location": row.get("Location"),
-            "Status": status  # No longer a list
+            "Status": status,
+            "Source": "Changelog Nightly"
         }
     }
 
