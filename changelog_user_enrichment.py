@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import time
-
+from dotenv import load_dotenv
 # Function to extract patterns from the page and update Airtable
 def extract_links(url, record_id, api_key, base_id, table_name):
     try:
@@ -89,9 +89,10 @@ def get_airtable_urls(api_key, base_id, table_name):
 
 # Main function to process URLs from Airtable
 if __name__ == "__main__":
+    load_dotenv(override=True)  # Added override=True for GitHub Actions compatibility
     API_KEY = os.getenv("TOKEN_AIRTABLE")
-    BASE_ID = 'appKhM4requBnJGOc'
-    TABLE_NAME = 'tblgUEvOxS3HIcX5F'
+    BASE_ID = os.getenv("AIRTABLE_CHANGELOG_BASE")
+    TABLE_NAME = os.getenv("AIRTABLE_PRODUCTION_TABLE")
 
     records = get_airtable_urls(API_KEY, BASE_ID, TABLE_NAME)
     print(records)
