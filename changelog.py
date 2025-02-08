@@ -34,7 +34,6 @@ formatted_date = yesterday_date.strftime("%Y/%m/%d")
 # Build the URL
 base_url = "https://nightly.changelog.com"
 input_url = f"{base_url}/{formatted_date}"
-filename = f"exports/export_changelog_{yesterday_date.year}_{yesterday_date.month:02d}_{yesterday_date.day:02d}.csv"
 
 # Overwritting the URL if need be
 #input_url = "https://nightly.changelog.com/2025/01/04"
