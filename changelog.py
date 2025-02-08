@@ -6,14 +6,15 @@ import re
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
-# Load environment variables from .env file (if it exists)
-load_dotenv()
+# Load environment variables from .env file (if it exists) or use GitHub Actions secrets
+load_dotenv(override=True)  # Add override=True to ensure .env doesn't override GitHub Actions secrets
 
 # Fetch secrets from environment variables
 github_api_token = os.getenv("TOKEN_GITHUB_API")
 airtable_token = os.getenv("TOKEN_AIRTABLE")
 airtable_changelog_base = os.getenv("AIRTABLE_CHANGELOG_BASE")
 airtable_production_table = os.getenv("AIRTABLE_PRODUCTION_TABLE")
+#openai_api_key = os.getenv("TOKEN_OPENAI")
 
 if not github_api_token or not airtable_token:
     raise ValueError("Missing required tokens. Ensure environment variables are set.")

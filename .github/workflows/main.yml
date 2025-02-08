@@ -26,4 +26,5 @@ jobs:
           TOKEN_AIRTABLE: ${{ secrets.TOKEN_AIRTABLE }}
           AIRTABLE_CHANGELOG_BASE: ${{ secrets.AIRTABLE_CHANGELOG_BASE }}
           AIRTABLE_PRODUCTION_TABLE: ${{ secrets.AIRTABLE_PRODUCTION_TABLE }}
+          TOKEN_OPENAI: ${{ secrets.TOKEN_OPENAI }}
         run: python changelog.py
