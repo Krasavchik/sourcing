@@ -4,19 +4,22 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import re
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+
+# Load environment variables from .env file (if it exists)
+load_dotenv()
 
 # Fetch secrets from environment variables
 github_api_token = os.getenv("TOKEN_GITHUB_API")
 airtable_token = os.getenv("TOKEN_AIRTABLE")
+airtable_changelog_base = os.getenv("AIRTABLE_CHANGELOG_BASE")
+airtable_production_table = os.getenv("AIRTABLE_PRODUCTION_TABLE")
 
 if not github_api_token or not airtable_token:
     raise ValueError("Missing required tokens. Ensure environment variables are set.")
 
 # Use the tokens as needed
 print("Successfully retrieved tokens!")
-
-AIRTABLE_BASE_ID = "appKhM4requBnJGOc"
-AIRTABLE_TABLE_ID = "tblgUEvOxS3HIcX5F"
 
 # Input: URL of the website
 # Get the current date
@@ -129,7 +132,7 @@ def get_github_author_info(author_url):
 
 # Function to push a row to Airtable
 def push_to_airtable(row):
-    url = f"https://api.airtable.com/v0/{AIRTABLE_BASE_ID}/{AIRTABLE_TABLE_ID}"
+    url = f"https://api.airtable.com/v0/{airtable_changelog_base}/{airtable_production_table}"
     headers = {
         "Authorization": f"Bearer {airtable_token}",
         "Content-Type": "application/json"
