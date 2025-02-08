@@ -130,6 +130,25 @@ def get_github_author_info(author_url):
         print(f"Error fetching data for {username}: {e}")
         return None, None, "No website", "No bio", "No location"
 
+# Function to check if repo exists in Airtable
+def check_repo_exists(repo_url):
+    url = f"https://api.airtable.com/v0/{airtable_changelog_base}/{airtable_production_table}"
+    headers = {
+        "Authorization": f"Bearer {airtable_token}",
+    }
+    params = {
+        "filterByFormula": f"{{Repo}}='{repo_url}'"
+    }
+    
+    try:
+        response = requests.get(url, headers=headers, params=params)
+        response.raise_for_status()
+        records = response.json().get('records', [])
+        return len(records) > 0
+    except requests.RequestException as e:
+        print(f"Error checking for existing repo: {e}")
+        return False
+
 # Function to push a row to Airtable
 def push_to_airtable(row):
     url = f"https://api.airtable.com/v0/{airtable_changelog_base}/{airtable_production_table}"
@@ -138,7 +157,10 @@ def push_to_airtable(row):
         "Content-Type": "application/json"
     }
 
-     # Ensure Type and Status are lists for Airtable's multiple-choice fields
+    # Check if repo exists and set status accordingly
+    status = "Duplicate" if check_repo_exists(row.get("Repo")) else "New"  # Remove list wrapping
+
+    # Ensure Type is a list for Airtable's multiple-choice fields
     type_value = row.get("Type", [])
     if not isinstance(type_value, list):
         type_value = [type_value] if type_value else []
@@ -156,13 +178,14 @@ def push_to_airtable(row):
             "Website": row.get("Website"),
             "Bio": row.get("Bio"),
             "Location": row.get("Location"),
+            "Status": status  # No longer a list
         }
     }
 
     # Send POST request to Airtable
     response = requests.post(url, headers=headers, json=data)
     if response.status_code == 200:
-        print(f"Successfully pushed row: {row['Repo']}")
+        print(f"Successfully pushed row: {row['Repo']} with status: {status}")
     else:
         print(f"Failed to push row: {row['Repo']}, Error: {response.text}")
 
