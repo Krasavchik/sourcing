@@ -21,5 +21,8 @@ jobs:
 
       - name: Run Changelog User Enrichment (x and linkedin)
         env:
+          TOKEN_GITHUB_API: ${{ secrets.TOKEN_GITHUB_API }}
           TOKEN_AIRTABLE: ${{ secrets.TOKEN_AIRTABLE }}
+          AIRTABLE_CHANGELOG_BASE: ${{ secrets.AIRTABLE_CHANGELOG_BASE }}
+          AIRTABLE_PRODUCTION_TABLE: ${{ secrets.AIRTABLE_PRODUCTION_TABLE }}
         run: python changelog_user_enrichment.py
