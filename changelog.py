@@ -6,7 +6,7 @@ import re
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
-# Load environment variables from .env file (if it exists) or use GitHub Actions secrets
+# Load environment variables from .env file (if it exists) or use GitHub Actions secrets.
 load_dotenv(override=True)  # Add override=True to ensure .env doesn't override GitHub Actions secrets
 
 # Fetch secrets from environment variables

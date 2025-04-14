@@ -34,7 +34,7 @@ def extract_links(url, record_id, api_key, base_id, table_name):
     for url in x_urls:
         print(f"x = {url}")
 
-    # Check existing LinkedIn and X fields before updating
+    # Check existing LinkedIn and X fields before updating.
     airtable_url = f"https://api.airtable.com/v0/{base_id}/{table_name}/{record_id}"
     headers = {
         "Authorization": f"Bearer {api_key}",
