@@ -1,0 +1,35 @@
+name: ingest-changelog-nightly
+
+on:
+  # run every hour at minute 7 CET (05,07,… avoids HN rate limits)
+  schedule:
+    - cron: '7 * * * *'
+  # also run on every push to main so you spot errors quickly
+  push:
+    branches: [main]
+
+jobs:
+  changelog_nightly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10       # fail fast if network stalls
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Changelog Nightly scrape
+        run: python -m sources.changelog_nightly.run
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+
+    # prevent overlapping runs on slow hours
+    concurrency:
+      group: ingest-changelog-nightly
+      cancel-in-progress: false
