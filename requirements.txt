@@ -1,4 +1,7 @@
-requests
-beautifulsoup4
-pandas
-python-dotenv
+requests>=2.32
+beautifulsoup4>=4.12
+SQLAlchemy>=2.0
+psycopg[binary]>=3.1
+python-dotenv>=1.0
+typer[all]>=0.12
+typer>=0.12
