@@ -63,6 +63,23 @@ class Entity(Base):
     # convenience: back-ref list of raw links
     raw_links = relationship("ItemEntityMap", back_populates="entity")
 
+# ── add just below the Entity class ─────────────────────────────────
+class EntityRelationship(Base):
+    __tablename__ = "entity_relationships"
+
+    src_id     = Column(Integer,
+                        ForeignKey("entities.id", ondelete="CASCADE"),
+                        primary_key=True)
+    dst_id     = Column(Integer,
+                        ForeignKey("entities.id", ondelete="CASCADE"),
+                        primary_key=True)
+    rel_type   = Column(String, primary_key=True)      # composite PK
+    confidence = Column(Numeric, default=1.0, nullable=False)
+
+    # optional back-refs if you ever need them
+    src = relationship("Entity", foreign_keys=[src_id])
+    dst = relationship("Entity", foreign_keys=[dst_id])
+
 
 # ------------------------------------------------------------------  
 # 3. Link table raw ↔ entity  ← NEW

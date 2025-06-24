@@ -13,6 +13,7 @@ import logging
 from qualifiers.registry   import qualifier                # decorator
 from common.github         import repo as gh_repo
 from common.github         import owner as gh_owner
+from common.models         import EntityRelationship
 from qualifiers.utils      import link_raw_to_entities     # tiny helper
 
 logger = logging.getLogger(__name__)
@@ -95,6 +96,15 @@ def enrich(raw, session):
 
     # ── link raw → entities ───────────────────────────────
     link_raw_to_entities(raw.id, [proj_id, owner_id], session)
+
+    session.add(
+        EntityRelationship(
+            src_id     = owner_id,
+            dst_id     = proj_id,
+            rel_type   = "owns",
+            confidence = 1.0,
+        )
+    )
 
     logger.info(
         "Upserted %-35s stars=%-6d owner=%s followers=%d",
