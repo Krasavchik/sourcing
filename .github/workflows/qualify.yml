@@ -2,12 +2,12 @@
 name: Qualify raw items
 
 on:
-  schedule:
-    # ── run at 05:00 UTC from last Sunday of March → last Sunday of Oct
-    - cron:  '0 5 * * *'
-    # ── run at 06:00 UTC for the rest of the year (CET / winter time)
-    - cron:  '0 6 * * *'
-  workflow_dispatch:      # manual trigger button in the Actions UI
+    # run every day at 6am CET (Central European Time)
+    schedule:
+      - cron: '0 6 * * *'
+    # also run on every push to main so you spot errors quickly
+    push:
+      branches: [main]
 
 jobs:
   qualify:
