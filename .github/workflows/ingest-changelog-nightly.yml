@@ -4,9 +4,6 @@ on:
   # run every day at 6am CET (Central European Time)
   schedule:
     - cron: '0 5 * * *'
-  # also run on every push to main so you spot errors quickly
-  push:
-    branches: [main]
 
 jobs:
   changelog_nightly:
