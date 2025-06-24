@@ -3,22 +3,23 @@ from datetime import datetime, timezone
 import enum
 
 from sqlalchemy import (
-    Column,
-    Integer,
-    String,
-    JSON,
-    TIMESTAMP,
-    Enum,
-    UniqueConstraint,
+    Column, Integer, String, JSON, TIMESTAMP, Enum, UniqueConstraint, ForeignKey, Numeric
 )
+from sqlalchemy.orm import declarative_base, relationship
 
-from .db import Base
+Base = declarative_base()
 
-
-# ---------------------------------------------------------------------------
-# 1.  Python-side enumeration (business values)
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------  
+# 0. Shared enums
+# ------------------------------------------------------------------
 class ItemType(enum.Enum):
+    project = "project"
+    person  = "person"
+    company = "company"
+    unknown = "unknown"
+
+
+class EntityType(enum.Enum):
     project = "project"
     person  = "person"
     company = "company"
@@ -26,45 +27,52 @@ class ItemType(enum.Enum):
     unknown = "unknown"
 
 
-# ---------------------------------------------------------------------------
-# 2.  Raw scrape table (immutable history)
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------------  
+# 1. Raw scrape table (already existed)
+# ------------------------------------------------------------------
 class RawItem(Base):
     __tablename__ = "raw_items"
 
     id          = Column(Integer, primary_key=True)
     source      = Column(String, nullable=False)
     external_id = Column(String, nullable=False)
+    item_type   = Column(Enum(ItemType))
+    title       = Column(String)
+    url         = Column(String)
+    meta        = Column("metadata", JSON, default=dict)
+    scraped_at  = Column(TIMESTAMP(timezone=True),
+                         default=lambda: datetime.now(timezone.utc))
 
-    # ——— Enum column: point to the **existing** DB type enum_item
-    item_type = Column(
-        Enum(
-            ItemType,          # the Python enum
-            name="enum_item",  # MUST match the Postgres enum you created
-            native_enum=True,  # cast as ::enum_item in SQL
-            create_type=False  # don't try to CREATE TYPE again
-        )
-    )
+    __table_args__ = (UniqueConstraint("source", "external_id"),)
 
-    title = Column(String)
-    url   = Column(String)
 
-    # expose as .meta in Python, keep "metadata" in Postgres
-    meta  = Column("metadata", JSON, default=dict)
+# ------------------------------------------------------------------  
+# 2. Canonical entity table  ← NEW
+# ------------------------------------------------------------------
+class Entity(Base):
+    __tablename__ = "entities"
 
-    scraped_at = Column(
-        TIMESTAMP(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
-    )
+    id            = Column(Integer, primary_key=True)
+    name          = Column(String)
+    entity_type   = Column(Enum(EntityType))
+    canonical_url = Column(String, unique=True)
+    meta          = Column(JSON, default=dict)
+    created_at    = Column(TIMESTAMP(timezone=True),
+                           default=lambda: datetime.now(timezone.utc))
 
-    # (source, external_id) must be unique so re-scraping is idempotent
-    __table_args__ = (
-        UniqueConstraint("source", "external_id", name="uq_raw_items_source_external_id"),
-    )
+    # convenience: back-ref list of raw links
+    raw_links = relationship("ItemEntityMap", back_populates="entity")
 
-    # optional: nice debug representation
-    def __repr__(self) -> str:  # pragma: no cover
-        return (
-            f"<RawItem id={self.id} source={self.source} "
-            f"external_id={self.external_id} url={self.url}>"
-        )
+
+# ------------------------------------------------------------------  
+# 3. Link table raw ↔ entity  ← NEW
+# ------------------------------------------------------------------
+class ItemEntityMap(Base):
+    __tablename__ = "item_entity_map"
+
+    raw_id     = Column(Integer, ForeignKey("raw_items.id", ondelete="CASCADE"), primary_key=True)
+    entity_id  = Column(Integer, ForeignKey("entities.id",  ondelete="CASCADE"), primary_key=True)
+    confidence = Column(Numeric)
+
+    raw_item   = relationship("RawItem")
+    entity     = relationship("Entity", back_populates="raw_links")

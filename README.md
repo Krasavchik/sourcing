@@ -18,3 +18,7 @@ A Python application that scrapes and analyzes GitHub repositories featured on [
 
 # Command lines:
 python3 -m sources.changelog_nightly.run
+
+
+Roadmap:
+- run.py (changelog nightly is ignoring duplicates, not inserting them in the database, hence missing signal on returning repo. For later: maybe refreshing existing entities based on that information would be useful)
