@@ -1,9 +1,9 @@
 name: ingest-changelog-nightly
 
 on:
-  # run every hour at minute 7 CET (05,07,… avoids HN rate limits)
+  # run every day at 6am CET (Central European Time)
   schedule:
-    - cron: '7 * * * *'
+    - cron: '0 5 * * *'
   # also run on every push to main so you spot errors quickly
   push:
     branches: [main]
