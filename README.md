@@ -14,3 +14,7 @@ A Python application that scrapes and analyzes GitHub repositories featured on [
   - Author information
 - Enriches data with author social media profiles (LinkedIn, X/Twitter)
 - Exports data to CSV and Airtable
+
+
+# Command lines:
+python3 -m sources.changelog_nightly.run

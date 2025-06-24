@@ -4,6 +4,8 @@ from datetime import datetime, timedelta
 from common.db import get_session
 from common.models import RawItem, ItemType
 from .parser import parse_page
+from sqlalchemy.exc import IntegrityError
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -25,11 +27,13 @@ def main(date: str = None, dry_run: bool = False):
             logger.info(f"Dry run: would insert {len(rows)} rows")
             return
         with get_session() as s:
-            objs = [RawItem(**{**r, "item_type": ItemType[r["item_type"]]}) for r in rows]
-            logger.info(f"Adding {len(objs)} objects to the session")
-            s.add_all(objs)
-            s.commit()
-            logger.info(f"Committed {len(objs)} objects to the database")
+            for r in rows:
+                obj = RawItem(**{**r, "item_type": ItemType[r["item_type"]]})
+                try:
+                    s.add(obj)
+                    s.commit()
+                except IntegrityError:
+                    s.rollback()  # Ignore duplicates
         typer.echo(f"Inserted {len(rows)} rows from {url}")
     except Exception as e:
         logger.error(f"Error in main: {e}", exc_info=True)
