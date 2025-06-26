@@ -1,0 +1,21 @@
+# .github/workflows/build_opportunities.yml
+name: Build opportunities
+on:
+  schedule:
+    - cron: '30 6 * * *'     # 07:30 CET = 06:30 UTC
+  # also run on every push to main so you spot errors quickly
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install -r requirements.txt
+      - run: python -m opportunity_builder.run

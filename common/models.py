@@ -3,9 +3,10 @@ from datetime import datetime, timezone
 import enum
 
 from sqlalchemy import (
-    Column, Integer, String, JSON, TIMESTAMP, Enum, UniqueConstraint, ForeignKey, Numeric
+    Column, Integer, String, JSON, TIMESTAMP, Enum, UniqueConstraint, ForeignKey, Numeric, ARRAY
 )
 from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.dialects.postgresql import insert
 
 Base = declarative_base()
 
@@ -93,3 +94,29 @@ class ItemEntityMap(Base):
 
     raw_item   = relationship("RawItem")
     entity     = relationship("Entity", back_populates="raw_links")
+
+class Opportunity(Base):
+    """
+    One row per investable cluster (project-only, owner+project, etc.)
+    """
+    __tablename__ = "opportunities"
+
+    id               = Column(Integer, primary_key=True)
+    anchor_entity_id = Column(Integer,
+                              ForeignKey("entities.id", ondelete="CASCADE"),
+                              unique=True, nullable=False)
+    anchor_type      = Column(String,  nullable=False)          # 'project' | 'person' | 'company'
+
+    # Postgres int[] → SQLAlchemy ARRAY(Integer)
+    related_project_ids  = Column(ARRAY(Integer), default=list, nullable=False)
+    related_person_ids   = Column(ARRAY(Integer), default=list, nullable=False)
+    related_company_ids  = Column(ARRAY(Integer), default=list, nullable=False)
+
+    meta        = Column(JSON, default=dict)
+    score       = Column(Numeric)
+    updated_at  = Column(TIMESTAMP(timezone=True),
+                         default=lambda: datetime.now(timezone.utc),
+                         onupdate=lambda: datetime.now(timezone.utc))
+
+    # optional helper: back-reference to anchor entity
+    anchor = relationship("Entity")
